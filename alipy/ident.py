@@ -23,19 +23,14 @@ class Identification:
 		A high value corresponds to a shallow unknown image.
 		It gets computed by the method calcfluxratio, using the matched stars.
 	:ivar stdfluxratio: Standard error on the flux ratios of the matched stars.
-
-		
-	
 	"""
 
 	def __init__(self, ref, ukn):
 		"""
-		
 		:param ref: The reference image
 		:type ref: ImgCat object
 		:param ukn: The unknown image, whose transform will be adjusted to match the ref
 		:type ukn: ImgCat object
-		
 		"""
 		self.ref = ref
 		self.ukn = ukn
@@ -51,7 +46,7 @@ class Identification:
 		self.stdfluxratio = None
 
 		
-	def findtrans(self, r = 5.0, verbose=True):
+	def findtrans(self, r=5.0, verbose=True):
 		"""
 		Find the best trans given the quads, and tests if the match is sufficient	
 		"""
@@ -59,13 +54,12 @@ class Identification:
 		# Some robustness checks
 		if len(self.ref.starlist) < 4:
 			if verbose:
-				print "Not enough stars in the reference catalog."
+				print("Not enough stars in the reference catalog.")
 			return
 		if len(self.ukn.starlist) < 4:
 			if verbose:
-				print "Not enough stars in the unknown catalog."
+				print("Not enough stars in the unknown catalog.")
 			return
- 
  		
 		# First question : how many stars should match ?
 		if len(self.ukn.starlist) < 5: # Then we should simply try to get the smallest distance...
@@ -105,29 +99,27 @@ class Identification:
 				
 				if addedmorerefquads == False and addedmoreuknquads == False:
 					break # get out of the while, we failed.
-	
 
 		if self.ok: # we refine the transform
 			# get matching stars :
 			(self.uknmatchstars, self.refmatchstars) = star.identify(self.ukn.starlist, self.ref.starlist, trans=self.trans, r=r, verbose=False, getstars=True)
 			# refit the transform on them :
 			if verbose:
-				print "Refitting transform (before/after) :"
-				print self.trans
+				print("Refitting transform (before/after) :")
+				print(self.trans)
 			newtrans = star.fitstars(self.uknmatchstars, self.refmatchstars)
 			if newtrans != None:
 				self.trans = newtrans
 				if verbose:
-					print self.trans
+					print(self.trans)
 			# Generating final matched star lists :
 			(self.uknmatchstars, self.refmatchstars) = star.identify(self.ukn.starlist, self.ref.starlist, trans=self.trans, r=r, verbose=verbose, getstars=True)
 
 			if verbose:
-				print "I'm done !"
-	
+				print("I'm done !")
 		else:
 			if verbose:
-				print "Failed to find transform !"
+				print("Failed to find transform !")
 			
 	def calcfluxratio(self, verbose=True):
 		"""
@@ -138,7 +130,7 @@ class Identification:
 		assert len(self.uknmatchstars) == len(self.refmatchstars)
 		if len(self.refmatchstars) == 0:
 			if verbose:
-				print "No matching stars to compute flux ratio !"
+				print("No matching stars to compute flux ratio !")
 			return
 		
 		reffluxes = star.listtoarray(self.refmatchstars, full=True)[:,2]
@@ -149,7 +141,7 @@ class Identification:
 		self.stdfluxratio = float(np.std(fluxratios))
 		
 		if verbose:
-			print "Computed flux ratio from %i matches : median %.2f, std %.2f" % (len(reffluxes), self.medfluxratio, self.stdfluxratio)
+			print("Computed flux ratio from %i matches : median %.2f, std %.2f" % (len(reffluxes), self.medfluxratio, self.stdfluxratio))
 		
 	
 	
@@ -160,7 +152,7 @@ class Identification:
 		if self.ok == False:
 			return
 		if verbose:
-			print "Plotting match ..."
+			print("Plotting match ...")
 		import matplotlib.pyplot as plt
 		#import matplotlib.patches
 		#import matplotlib.collections
@@ -201,9 +193,7 @@ class Identification:
 			plt.savefig(os.path.join("alipy_visu", self.ukn.name + "_match.png"))
 
 
-
-
-def run(ref, ukns, hdu=0, visu=True, skipsaturated=False, r = 5.0, n=500, sexkeepcat=False, sexrerun=True, verbose=True):
+def run(ref, ukns, hdu=0, visu=True, skipsaturated=False, r=5.0, n=500, sexkeepcat=False, sexrerun=True, verbose=True):
 	"""
 	Top-level function to identify transorms between images.
 	Returns a list of Identification objects that contain all the info to go further.
@@ -239,7 +229,7 @@ def run(ref, ukns, hdu=0, visu=True, skipsaturated=False, r = 5.0, n=500, sexkee
 	"""
 	
 	if verbose:
-		print 10*"#", " Preparing reference ..."
+		print(10*"#", " Preparing reference ...")
 	ref = imgcat.ImgCat(ref, hdu=hdu)
 	ref.makecat(rerun=sexrerun, keepcat=sexkeepcat, verbose=verbose)
 	ref.makestarlist(skipsaturated=skipsaturated, n=n, verbose=verbose)
@@ -252,7 +242,7 @@ def run(ref, ukns, hdu=0, visu=True, skipsaturated=False, r = 5.0, n=500, sexkee
 	for ukn in ukns:
 		
 		if verbose:
-			print 10*"#", "Processing %s" % (ukn)
+			print(10*"#", "Processing %s" % (ukn))
 		
 		ukn = imgcat.ImgCat(ukn, hdu=hdu)
 		ukn.makecat(rerun=sexrerun, keepcat=sexkeepcat, verbose=verbose)

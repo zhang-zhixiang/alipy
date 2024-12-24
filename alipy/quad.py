@@ -90,7 +90,6 @@ class Quad:
 		
 		self.stars = [A, B, C, D] # Order might be different from the fourstars !
 		
-		
 	def __str__(self):
 		return "Hash : %6.3f %6.3f %6.3f %6.3f / IDs : (%s, %s, %s, %s)" % (
 			self.hash[0], self.hash[1], self.hash[2], self.hash[3],
@@ -104,7 +103,6 @@ def mindist(fourstars):
 	tests = [(0,1), (0,2), (0,3), (1,2), (1,3), (2,3)]
 	dists = np.array([fourstars[i].distance(fourstars[j]) for (i,j) in tests])
 	return np.min(dists)
-
 
 
 def makequads1(starlist, n=7, s=0, d=50.0, verbose=True):
@@ -130,13 +128,11 @@ def makequads1(starlist, n=7, s=0, d=50.0, verbose=True):
 				quadlist.append(Quad(fourstars))	
 	
 	if verbose:
-		print "Made %4i quads from %4i stars (combi n=%i s=%i d=%.1f)" % (len(quadlist), len(starlist), n, s, d)
+		print("Made %4i quads from %4i stars (combi n=%i s=%i d=%.1f)" % (len(quadlist), len(starlist), n, s, d))
 		
 	return quadlist
 
 
-
-	
 def makequads2(starlist, f=5.0, n=6, s=0, d=50.0, verbose=True):
 	"""
 	Similar, but fxf in subareas roughly f times smaller than the full frame.
@@ -169,12 +165,9 @@ def makequads2(starlist, f=5.0, n=6, s=0, d=50.0, verbose=True):
 					quadlist.append(Quad(fourstars))
 			
 	if verbose:
-		print "Made %4i quads from %4i stars (combi sub f=%.1f n=%i s=%i d=%.1f)" % (len(quadlist), len(starlist), f, n, s, d)
+		print("Made %4i quads from %4i stars (combi sub f=%.1f n=%i s=%i d=%.1f)" % (len(quadlist), len(starlist), f, n, s, d))
 
 	return quadlist
-
-
-
 
 
 def removeduplicates(quadlist, verbose=True):
@@ -195,10 +188,9 @@ def removeduplicates(quadlist, verbose=True):
 	ui[1:] = (diff >= 0.000001).any(axis=1)
 	#print hasharray[ui==False]
 	if verbose:
-		print "Removing %i/%i duplicates" % (len(quadlist) - np.sum(ui), len(quadlist))
+		print("Removing %i/%i duplicates" % (len(quadlist) - np.sum(ui), len(quadlist)))
 	
 	return [quad for (quad, u) in zip(quadlist, ui) if u == True] 
-	
 
 
 def proposecands(uknquadlist, refquadlist, n=5, verbose=True):
@@ -209,11 +201,11 @@ def proposecands(uknquadlist, refquadlist, n=5, verbose=True):
 	# Nothing to do if the quadlists are empty ...
 	if len(uknquadlist) == 0 or len(refquadlist) == 0:
 		if verbose:
-			print "No quads to propose ..."
+			print("No quads to propose ...")
 		return []
 	
 	if verbose:
-		print "Finding %i best candidates among %i x %i (ukn x ref)" % (n, len(uknquadlist), len(refquadlist))
+		print("Finding %i best candidates among %i x %i (ukn x ref)" % (n, len(uknquadlist), len(refquadlist)))
 	uknhashs = np.array([q.hash for q in uknquadlist])	
 	refhashs = np.array([q.hash for q in refquadlist])
 	
@@ -226,7 +218,7 @@ def proposecands(uknquadlist, refquadlist, n=5, verbose=True):
 	candlist = []
 	nmax = len(uknbestindexes)
 	if verbose:
-		print "We have a maximum of %i quad pairs" % (nmax)
+		print("We have a maximum of %i quad pairs" % (nmax))
 	for i in range(min(n, nmax)):
 	
 		cand = {"uknquad": uknquadlist[uknbestindexes[i]], "refquad":refquadlist[uknmindistindexes[uknbestindexes[i]]],
@@ -236,7 +228,7 @@ def proposecands(uknquadlist, refquadlist, n=5, verbose=True):
 		
 		candlist.append(cand)
 		if verbose:
-			print "Cand %2i (dist. %12.8f) : %s" % (i+1, cand["dist"], str(cand["trans"]))
+			print("Cand %2i (dist. %12.8f) : %s" % (i+1, cand["dist"], str(cand["trans"])))
 	
 	return candlist
 	

@@ -107,7 +107,7 @@ def printlist(starlist):
     Prints the stars ...
     """
     for source in starlist:
-        print source
+        print(source)
 
 def listtoarray(starlist, full=False):
     """
@@ -205,11 +205,12 @@ def readmancat(mancatfilepath, verbose="True"):
         table.append(Star(x=x, y=y, name=name, flux=flux))
 
 
-    if verbose: print "I've read", len(table), "sources from", os.path.split(mancatfilepath)[1]
+    if verbose:
+        print("I've read", len(table), "sources from", os.path.split(mancatfilepath)[1])
     return table
 
 
-def readsexcat(sexcat, hdu=0, verbose=True, maxflag = 3, posflux = True, minfwhm=2.0, propfields=[]):
+def readsexcat(sexcat, hdu=0, verbose=True, maxflag=3, posflux=True, minfwhm=2.0, propfields=[]):
     """
     sexcat is either a string (path to a file), or directly an asciidata catalog object as returned by pysex
 
@@ -279,7 +280,7 @@ def readsexcat(sexcat, hdu=0, verbose=True, maxflag = 3, posflux = True, minfwhm
 
     if len(mycat) == 0:
         if verbose :
-            print "No stars in the catalog :-("
+            print("No stars in the catalog :-(")
     else :
         for i, num in enumerate(mycat['NUMBER']) :
             if mycat['FLAGS'][i] > maxflag :
@@ -301,7 +302,7 @@ def readsexcat(sexcat, hdu=0, verbose=True, maxflag = 3, posflux = True, minfwhm
             returnlist.append(newstar)
 
     if verbose:
-        print "I've selected %i sources" % (len(returnlist))
+        print("I've selected %i sources" % (len(returnlist)))
 
     return returnlist
 
@@ -422,7 +423,7 @@ def fitstars(uknstars, refstars, verbose=True):
     assert len(uknstars) == len(refstars)
     if len(uknstars) < 2:
         if verbose:
-            print "Sorry I cannot fit a transform on less than 2 stars."
+            print("Sorry I cannot fit a transform on less than 2 stars.")
         return None
 
     # ukn * x = ref
@@ -522,8 +523,8 @@ def identify(uknstars, refstars, trans=None, r=5.0, verbose=True, getstars=False
     minokindexes = np.argwhere(minok).flatten() # indexes of uknstars with matches
 
     if verbose:
-        print "%i/%i stars with distance < r = %.1f (mean %.1f, median %.1f, std %.1f)" % (np.sum(minok), len(uknstars), r,
-            np.mean(mindists[minok]), np.median(mindists[minok]), np.std(mindists[minok]))
+        print("%i/%i stars with distance < r = %.1f (mean %.1f, median %.1f, std %.1f)" % (np.sum(minok), len(uknstars), r,
+            np.mean(mindists[minok]), np.median(mindists[minok]), np.std(mindists[minok])))
 
     matchuknstars = []
     matchrefstars = []
@@ -539,7 +540,7 @@ def identify(uknstars, refstars, trans=None, r=5.0, verbose=True, getstars=False
             pass # Then there is a companion, we skip it.
 
     if verbose:
-        print "Filtered for companions, keeping %i/%i matches" % (len(matchuknstars), np.sum(minok))
+        print("Filtered for companions, keeping %i/%i matches" % (len(matchuknstars), np.sum(minok)))
 
     if getstars==True:
         return (matchuknstars, matchrefstars)

@@ -50,7 +50,6 @@ class ImgCat:
 		params=['X_IMAGE', 'Y_IMAGE', 'FLUX_AUTO', 'FWHM_IMAGE', 'FLAGS', 'ELONGATION', 'NUMBER', "EXT_NUMBER"],
 		rerun=rerun, keepcat=keepcat, catdir="alipy_cats")
 
-	
 	def makestarlist(self, skipsaturated=False, n=200, verbose=True):
 		if self.cat:
 			if skipsaturated:
@@ -68,7 +67,6 @@ class ImgCat:
 		else:
 			raise RuntimeError("No cat : call makecat first !")
 	
-	
 	def makemorequads(self, verbose=True):
 		"""
 		We add more quads, following the quadlevel.
@@ -76,7 +74,7 @@ class ImgCat:
 		#if not add:
 		#	self.quadlist = []
 		if verbose:
-			print "Making more quads, from quadlevel %i ..." % self.quadlevel
+			print("Making more quads, from quadlevel %i ..." % self.quadlevel)
 		if self.quadlevel == 0:
 			self.quadlist.extend(quad.makequads1(self.starlist, n=7, d=self.mindist, verbose=verbose))
 		elif self.quadlevel == 1:
@@ -95,7 +93,6 @@ class ImgCat:
 		self.quadlevel += 1
 		return True	
 		
-	
 	def showstars(self, verbose=True):
 		"""
 		Uses f2n to write a png image with circled stars.
@@ -103,11 +100,11 @@ class ImgCat:
 		try:
 			import f2n
 		except ImportError:
-			print "Couldn't import f2n -- install it !"
+			print("Couldn't import f2n -- install it !")
 			return
 				
 		if verbose:
-			print "Writing png ..."
+			print("Writing png ...")
 		myimage = f2n.fromfits(self.filepath, verbose=False)
 		#myimage.rebin(int(myimage.xb/1000.0))
 		myimage.setzscale("auto", "auto")
@@ -120,14 +117,12 @@ class ImgCat:
 				os.makedirs("alipy_visu")
 		myimage.tonet(os.path.join("alipy_visu", self.name + "_stars.png"))
 
-	
-	
 	def showquads(self, show=False, flux=True, verbose=True):
 		"""
 		Uses matplotlib to write/show the quads.
 		"""
 		if verbose:
-			print "Plotting quads ..."
+			print("Plotting quads ...")
 		
 		import matplotlib.pyplot as plt
 		#import matplotlib.patches
@@ -168,9 +163,6 @@ class ImgCat:
 			plt.savefig(os.path.join("alipy_visu", self.name + "_quads.png"))
 
 
-
-
-
 def ccworder(a):
 	"""
 	Sorting a coordinate array CCW to plot polygons ...
@@ -178,5 +170,3 @@ def ccworder(a):
 	ac = a - np.mean(a, 0)
 	indices = np.argsort(np.arctan2(ac[:, 1], ac[:, 0]))
 	return a[indices]
-
-

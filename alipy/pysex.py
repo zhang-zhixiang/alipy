@@ -28,20 +28,21 @@ def _check_files(conf_file, conf_args, verbose=True):
         conf_file = '.pysex.sex'
     if not conf_args.has_key('FILTER_NAME') or not os.path.isfile(conf_args['FILTER_NAME']):
         if verbose:
-            print 'No filter file found, using default filter'
+            print('No filter file found, using default filter')
         f = open('.pysex.conv', 'w')
-        print>>f, """CONV NORM
+        text = """CONV NORM
 # 3x3 ``all-ground'' convolution mask with FWHM = 2 pixels.
 1 2 1
 2 4 2
 1 2 1"""
+        f.write(text)
         f.close()
         conf_args['FILTER_NAME'] = '.pysex.conv'
     if not conf_args.has_key('STARNNW_NAME') or not os.path.isfile(conf_args['STARNNW_NAME']):
         if verbose:
-            print 'No NNW file found, using default NNW config'
+            print('No NNW file found, using default NNW config')
         f = open('.pysex.nnw', 'w')
-        print>>f, """NNW
+        text = """NNW
 # Neural Network Weights for the SExtractor star/galaxy classifier (V1.3)
 # inputs:     9 for profile parameters + 1 for seeing.
 # outputs:      ``Stellarity index'' (0.0 to 1.0)
@@ -69,6 +70,7 @@ def _check_files(conf_file, conf_args, verbose=True):
 
  0.00000e+00
  1.00000e+00"""
+        f.write(text)
         f.close()
         conf_args['STARNNW_NAME'] = '.pysex.nnw'
 
@@ -81,7 +83,8 @@ def _setup(conf_file, params):
         pass #already created in _check_files
 
     f=open('.pysex.param', 'w')
-    print>>f, '\n'.join(params)
+    text = '\n'.join(params)
+    f.write(text)
     f.close()
 
 def _setup_img(image, name):
@@ -101,6 +104,7 @@ def _read_cat(path = '.pysex.cat'):
     # cat = asciidata.open(path)
     cat = ascii.read(path)
     return cat
+
 
 def _cleanup():
     files = [f for f in os.listdir('.') if '.pysex.' in f]
@@ -158,27 +162,30 @@ def run(image='', imageref='', params=[], conf_file=None, conf_args={}, keepcat=
     conf_args['PARAMETERS_NAME'] = '.pysex.param'
     if 'VERBOSE_TYPE' in conf_args and conf_args['VERBOSE_TYPE']=='QUIET':
         verbose = False
-    else: verbose = True
+    else:
+        verbose = True
     _cleanup()
-    if not type(image) == type(''):
+    if not type(image) is type(''):
         im_name = '.pysex.fits'
         fits.writeto(im_name, image.transpose())
-    else: im_name = image
-    if not type(imageref) == type(''):
+    else:
+        im_name = image
+    if not type(imageref) is type(''):
         imref_name = '.pysex.ref.fits'
         fits.writeto(imref_name, imageref.transpose())
-    else: imref_name = imageref
+    else:
+        imref_name = imageref
     conf_file, conf_args = _check_files(conf_file, conf_args, verbose)
     _setup(conf_file, params)
     cmd = _get_cmd(im_name, imref_name, conf_args)
     res = os.system(cmd)
     if res:
-        print "Error during sextractor execution!"
+        print("Error during sextractor execution!")
         _cleanup()
         return
 
     # Keeping the cat at a permanent location :
-    if keepcat and type(image) == type(''):
+    if keepcat and type(image) is type(''):
         shutil.copy('.pysex.cat', catpath)
 
     # Returning the cat :
